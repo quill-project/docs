@@ -1,0 +1,97 @@
+
+mod docs::intro
+
+use docs::*
+use frontend::*
+use js::*
+
+val SET_TIMEOUT: Fun(Fun(), Int) -> JsValue = global("setTimeout")
+    |> expect("'setTimeout' must exist")
+    |> Fun2::from_js()
+
+val WORDS: List[String] = List::of(
+    "Simple",
+    "Elegant",
+    "Quill"
+)
+
+struct TypingState(word_idx: Int, to_idx: Int)
+struct DisplayState(word_idx: Int, show_cursor: Bool, step_idx: Int)
+
+enum AnimState(
+    Typing: TypingState,
+    Displaying: DisplayState,
+    Deleting: TypingState
+)
+
+fun apply_state(state: AnimState, target: mut Element) {
+    val set_text: Fun(String) = |text| {
+        target |> set_text_content(Option::Some(text |> as_js()))
+    }
+    val apply_typing_state: Fun(TypingState, Bool) = |t_state, show_cursor| WORDS 
+        |> at(t_state.word_idx) 
+        |> slice_to(t_state.to_idx)
+        |> concat(if show_cursor { "█" } else { "" })
+        |> set_text()
+    val apply_display_state: Fun(DisplayState) = |d_state| WORDS
+        |> at(d_state.word_idx)
+        |> concat(if d_state.show_cursor { "█" } else { "" })
+        |> set_text()
+    match state {
+        Typing(t_state) { apply_typing_state(t_state, true) }
+        Displaying(d_state) { apply_display_state(d_state) }
+        Deleting(t_state) { apply_typing_state(t_state, false) }
+    }
+}
+
+val TYPING_SPEED: Int = 100 // ms between keystrokes
+val CURSOR_SPEED: Int = 500 // ms between cursor blinking on/off
+val DISPLAY_STEPS: Int = 5 // number of cursor steps spent displaying (* CURSOR_SPEED = total time)
+val DELETE_SPEED: Int = 50 // ms between deletion of each character
+
+fun advance_state(state: AnimState, target: mut Element) {
+    val advance_in: Fun(Int, AnimState) = |delay_ms, next_state| {
+        apply_state(next_state, target)
+        SET_TIMEOUT(|| advance_state(next_state, target), delay_ms)
+    }
+    match state {
+        Typing(t) {
+            val c_word_len: Int = WORDS |> at(t.word_idx) |> length()
+            val n_to_idx: Int = t.to_idx + 1
+            if n_to_idx < c_word_len {
+                val next_t = TypingState(t.word_idx, n_to_idx)
+                return advance_in(TYPING_SPEED, AnimState::Typing(next_t))
+            }
+            val d_state = DisplayState(t.word_idx, true, 0)
+            return advance_in(TYPING_SPEED, AnimState::Displaying(d_state))
+        }
+        Displaying(d) {
+            val c_word_len: Int = WORDS |> at(d.word_idx) |> length()
+            val n_step: Int = d.step_idx + 1
+            if n_step < DISPLAY_STEPS {
+                val next_d = DisplayState(d.word_idx, !d.show_cursor, n_step)
+                return advance_in(CURSOR_SPEED, AnimState::Displaying(next_d))
+            }
+            val del_state = TypingState(d.word_idx, c_word_len)
+            return advance_in(CURSOR_SPEED, AnimState::Deleting(del_state))
+        }
+        Deleting(t) {
+            if t.to_idx > 0 {
+                val next_t = TypingState(t.word_idx, t.to_idx - 1)
+                return advance_in(DELETE_SPEED, AnimState::Deleting(next_t))
+            }
+            val n_word_idx: Int = (t.word_idx + 1) % (WORDS |> length())
+            val t_state = TypingState(n_word_idx, 0)
+            return advance_in(DELETE_SPEED, AnimState::Typing(t_state))
+        }
+    }
+}
+
+pub fun text_anim() {
+    val document: mut Document = WINDOW |> document()
+    val target: mut Element = document
+        |> get_element_by_id("intro-text")
+        |> expect("Element with ID 'intro-text' must exist!")
+    val state: AnimState = AnimState::Typing(TypingState(0, 0))
+    advance_state(state, target)
+}

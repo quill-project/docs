@@ -1,0 +1,184 @@
+
+mod docs::playground
+
+use js::*
+use frontend::*
+use quill::*
+
+val WORKER_DRIVER_START: String = "
+console.log = message => {
+    self.postMessage({ stream: \"stdout\", message: `${message}` });
+};
+
+console.error = message => {
+    self.postMessage({ stream: \"stderr\", message: `${message}` });
+};
+
+try {
+"
+
+val WORKER_DRIVER_END: String = "
+} catch(error) {
+    self.postMessage({ stream: \"stderr\", message: `${error}` });
+}
+self.postMessage({ done: true });
+"
+
+pub fun execute(input: String, out: mut Element, on_end: Fun()) -> Option[Fun()] {
+    out |> set_text_content(Option::None)
+    match "mod playground\n" |> concat(input) |> compile() {
+        Ok(compiled) {
+            return execute_compiled(compiled, out, on_end) |> Option::Some()
+        }
+        Err(errors) {
+            out |> set_text_content(Option::Some(errors |> as_js()))
+            return Option::None
+        }
+    }
+}
+
+ext fun debug[T](value: T) = "
+    console.log(#var(value));
+"
+
+pub fun execute_compiled(compiled: String, out: mut Element, on_end: Fun()) -> Fun() {
+    val worker_code: String = WORKER_DRIVER_START
+        |> concat(compiled)
+        |> concat(WORKER_DRIVER_END)
+    val blob_props = BlobPropertyBag::default()
+    blob_props.type = Option::Some("application/javascript")
+    val blob: mut Blob = Blob::from_list_any_mblob_property_bag(
+        List::of(worker_code |> as_js()), blob_props
+    )
+    val workerUrl: String = URL::create_object_url(blob)
+    val worker = Worker::from_str_mworker_options(
+        workerUrl, WorkerOptions::default()
+    )
+    val stdout_write: Fun(String) = |text| {
+        val old_content = out 
+            |> text_content() 
+            |> map(String::from_js) 
+            |> unwrap_or("")
+        out |> set_text_content(Option::Some(old_content 
+            |> concat(text) 
+            |> concat("\n")
+            |> as_js()
+        ))
+        out |> set_scroll_top(out |> scroll_height() |> as_float())
+    }
+    worker |> set_onmessage(Option::Some(|event_js| {
+        val event: mut MessageEvent = MessageEvent::from_js(event_js)
+        val data: mut JsObject = event |> data()
+            |> JsObject::from_js()
+        if data |> has("done") { 
+            on_end()
+        }
+        if data |> has("stream") {
+            val message: String = data 
+                |> get("message") 
+                |> expect("Worker driver needs to return message content!")
+                |> String::from_js()
+            stdout_write(message)
+        }
+        return UNDEF
+    }))
+    return || {
+        worker |> terminate()
+        stdout_write("<forcefully terminated>")
+    }
+}
+
+pub fun compile(input: String) -> Result[String, String] {
+    val inp_file: String = "playground.quill"
+    val sources: mut Map[String, String] = LOADED_STD_FILES
+        |> values()
+        |> Map::collect()
+    sources |> set(inp_file, input)
+    val messages: mut List[Message] = List::empty()
+    // parse all source files
+    val nodes: List[ast::UntypedNode] = sources
+        |> entries()
+        |> map[Pair[String, String], List[ast::UntypedNode]](|s| {
+            val tokens: mut Stream[token::Token]
+                = lexer::tokenize(s.first, s.second, messages)
+            val parser = parser::Parser::from(tokens, messages)
+            return parser::parse_file(parser)
+        })
+        |> reduce(List::concat)
+        |> unwrap_or_else(List::empty)
+    // build a symbol table and check all symbols
+    val table = types::SymbolTable::from(nodes, messages)
+    val unchecked: mut List[types::SymbolInstance] 
+        = types::SymbolTable::base_instances(table)
+    Stream::new[mut List[types::SymbolInstance]](|| unchecked)
+        |> take_while(|q| (q |> length()) != 0)
+        |> for_each(|q| {
+            val i: types::SymbolInstance 
+                = q |> pop() 
+                |> expect("stream should've ended")
+            types::SymbolTable::check_symbol(table, i, q, messages)
+        })
+    // report messages and exit if has any errors
+    if messages |> values() |> any(Message::is_error) {
+        val errors: String = messages |> values() 
+            |> map[Message, String](|m| m |> display(sources, false))
+            |> join("\n\n")
+        return Result::Err(errors)
+    }
+    // emit code
+    val output: String = codegen::js::emit(table, List::of("playground", "main"), messages)
+    // report messages and exit if has any errors
+    if messages |> values() |> any(Message::is_error) {
+        val errors: String = messages |> values() 
+            |> map[Message, String](|m| m |> display(sources, false))
+            |> join("\n\n")
+        return Result::Err(errors)
+    }
+    return Result::Ok(output)
+}
+
+pub val STD_FILES: List[String] = List::of(
+    ".quill/https___github_com_quill-project_std/src/bool.quill",
+    ".quill/https___github_com_quill-project_std/src/containers.quill",
+    ".quill/https___github_com_quill-project_std/src/float.quill",
+    ".quill/https___github_com_quill-project_std/src/fun.quill",
+    ".quill/https___github_com_quill-project_std/src/hash.quill",
+    ".quill/https___github_com_quill-project_std/src/int.quill",
+    ".quill/https___github_com_quill-project_std/src/list.quill",
+    ".quill/https___github_com_quill-project_std/src/map.quill",
+    ".quill/https___github_com_quill-project_std/src/option.quill",
+    ".quill/https___github_com_quill-project_std/src/result.quill",
+    ".quill/https___github_com_quill-project_std/src/sequence.quill",
+    ".quill/https___github_com_quill-project_std/src/set.quill",
+    ".quill/https___github_com_quill-project_std/src/std.quill",
+    ".quill/https___github_com_quill-project_std/src/stream.quill",
+    ".quill/https___github_com_quill-project_std/src/string_builder.quill",
+    ".quill/https___github_com_quill-project_std/src/string.quill",
+    ".quill/https___github_com_quill-project_std/src/test.quill",
+    ".quill/https___github_com_quill-project_std/src/unit.quill",
+
+    ".quill/https___github_com_quill-project_std-js/src/bool.quill",
+    ".quill/https___github_com_quill-project_std-js/src/float.quill",
+    ".quill/https___github_com_quill-project_std-js/src/int.quill",
+    ".quill/https___github_com_quill-project_std-js/src/io.quill",
+    ".quill/https___github_com_quill-project_std-js/src/list.quill",
+    ".quill/https___github_com_quill-project_std-js/src/sequence.quill",
+    ".quill/https___github_com_quill-project_std-js/src/string_builder.quill",
+    ".quill/https___github_com_quill-project_std-js/src/string.quill"
+)
+
+val LOADED_STD_FILES: mut List[Pair[String, String]] = List::empty()
+val LOAD_STD_FILES_REQ: Unit = load_std_files()
+
+fun load_std_files() {
+    val window: mut Window = global("window")
+        |> expect("in normal frontend context")
+        |> Window::from_js()
+    for file: STD_FILES |> values() {
+        window |> fetch(file |> as_js(), RequestInit::default())
+            |> then(Response::text)
+            |> map[String, Unit](|content| {
+                LOADED_STD_FILES |> push(Pair(file, content))
+            })
+    }
+}

@@ -1,0 +1,38 @@
+
+mod docs
+
+use frontend::*
+use js::*
+
+pub val WINDOW: mut Window = global("window")
+    |> expect("in normal frontend context")
+    |> Window::from_js()
+
+// A 'feature' is some Quill function that should be executed on page load.
+// Different pages of the site may want different functions to be executed;
+// the main page needs different functionality from the docs pages.
+
+val REQUESTED_FEATURES: List[String] = global("pageFeatures")
+    |> unwrap_or(js::EMPTY_LIST)
+    |> List::from_js()
+
+val FEATURES: Map[String, Fun()] = Map::of(
+    Pair("intro-text-anim", intro::text_anim),
+    Pair("embedded-playgrounds", playground::embedded)
+)
+
+fun on_page_load(_: mut Event) {
+    for req_feature: REQUESTED_FEATURES |> values() {
+        match FEATURES |> get(req_feature) {
+            Some(f) { f() }
+            None { "Unknown requested feature '_'"
+                |> fmt(req_feature)
+                |> eprintln()
+            }
+        }
+    }
+}
+
+fun main() {
+    WINDOW |> add_event_listener("load", Option::Some(on_page_load), UNDEF)
+}

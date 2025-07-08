@@ -1,0 +1,13 @@
+{
+    "name": "docs",
+    "authors": ["schwalbe_t"],
+    "description": "The Quill website, providing documentation and a playground.",
+    "type": "application",
+    "main": "docs::main",
+    "backend": "js",
+    "dependencies": [
+        "https://github.com/quill-project/std-js",
+        "https://github.com/quill-project/frontend",
+        "https://github.com/quill-project/compiler"
+    ]
+}

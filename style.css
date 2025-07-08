@@ -1,0 +1,195 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@font-face {
+    font-family: "Jetbrains Mono";
+    src: url("res/JetBrainsMono.ttf");
+}
+
+:root {
+    --bg-back: #000000;
+    --bg: #0d0d0d;
+    --bg-front: #1a1a1a;
+    --text: #f2f2f2;
+    --text-muted: #b3b3b3;
+    --primary: #d3157a;
+    --primary-muted: #852a7e;
+    --secondary: #008f84;
+    --secondary-muted: #3e554c;
+}
+
+body {
+    margin: 0px;
+    background-color: var(--bg-back);
+    font-family: 'Rubik';
+    color: var(--text-muted);
+    padding-bottom: 30rem;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--text);
+}
+
+button {
+    border: 0px;
+    outline: 0px;
+    font-family: inherit;
+    font-size: inherit;
+    color: var(--text);
+    background: var(--bg-front);
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    border-radius: 0.25rem;
+    font-size: 1.2rem;
+    font-weight: 450;
+}
+
+button:hover {
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+}
+
+/* Navbar classes */
+
+.navbar {
+    width: 100vw;
+    height: 7.5rem;
+    box-sizing: border-box;
+}
+
+.logo-container {
+    margin-left: 0.5rem;
+    float: left;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.logo-image {
+    height: 100%;
+}
+
+.logo-text-container {
+    position: relative;
+}
+
+.logo-text {
+    position: absolute;
+    top: 50%;
+    transform: translate(0px, -50%);
+    font-size: 0.8rem;
+    font-family: 'Rubik';
+}
+
+.items-container {
+    position: relative;
+    float: right;
+    height: 100%;
+    margin-right: 3rem;
+}
+
+.items-list {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(0, -50%);
+}
+
+.navbar-item {
+    margin-left: 1rem;
+}
+
+/* General page section classes */
+
+.page-section {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    width: 100%;
+    padding-bottom: 1.5rem;
+}
+
+.section-content-center {
+    width: 100vmin;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-content-center-wide {
+    width: min(100vw, 120vh);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-section-horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.gradiant-section-background-primary {
+    background: 
+        radial-gradient(circle at 30% 10%, var(--primary), transparent 50%),
+        radial-gradient(circle at 70% 100%, var(--primary-muted), transparent 40%);
+    color: var(--text);
+}
+
+.gradiant-section-background-secondary {
+    background: 
+        radial-gradient(circle at 70% 10%, var(--secondary), transparent 50%),
+        radial-gradient(circle at 30% 100%, var(--secondary-muted), transparent 40%);
+    color: var(--text);
+}
+
+/* Embedded Playground */
+
+.embedded-playground {
+    width: 40rem;
+    height: 25rem;
+    border-radius: 0.5rem;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.embedded-playground-editor {
+    width: 100%;
+    height: 20.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.embedded-playground-console {
+    width: 100%;
+    flex-grow: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: row;
+}
+
+.embedded-playground-output {
+    flex-grow: 1;
+    height: 100%;
+    overflow-y: scroll;
+    white-space: pre-wrap;
+    font-family: "Jetbrains Mono";
+    font-weight: 400;
+    color: var(--text-muted);
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+    box-sizing: border-box;
+}
+
+.embedded-playground-button {
+    flex-shrink: 0;
+    margin: 0 0.5rem 0 0.5rem;
+    box-sizing: border-box;
+    margin-top: auto;
+    margin-bottom: auto;
+}

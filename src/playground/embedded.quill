@@ -1,0 +1,64 @@
+
+mod docs::playground
+
+use docs::*
+use js::*
+use frontend::*
+
+pub fun embedded() {
+    val containers: mut HTMLCollection = WINDOW 
+        |> document()
+        |> get_elements_by_class_name("embedded-playground")
+    for i: range(0, containers |> length()) {
+        containers |> item(i) 
+            |> expect("Bounded by range")
+            |> init_embedded()
+    }
+}
+
+fun init_embedded(container: mut Element) {
+    val value: String = container 
+        |> text_content()
+        |> map(String::from_js) 
+        |> unwrap_or("")
+    container |> set_text_content(Option::None)
+    val document: mut Document = WINDOW |> document()
+    val editor_elem: mut Element = document |> create_element_str("div")
+    editor_elem |> class_list() |> add("embedded-playground-editor")
+    container |> append_child(editor_elem |> as_mnode())
+    val console_elem: mut Element = document |> create_element_str("div")
+    console_elem |> class_list() |> add("embedded-playground-console")
+    container |> append_child(console_elem |> as_mnode())
+    val output_elem: mut Element = document |> create_element_str("div")
+    output_elem |> class_list() |> add("embedded-playground-output")
+    console_elem |> append_child(output_elem |> as_mnode())
+    val exec_button: mut Element = document |> create_element_str("button")
+    exec_button |> class_list() |> add("embedded-playground-button")
+    exec_button |> set_text_content(Option::Some("Run" |> as_js()))
+    console_elem |> append_child(exec_button |> as_mnode())
+    monaco::init(editor_elem, value) |> map[JsObject, Unit](|editor| {
+        mut click_handler: Fun() = || {}
+        mut execute_on_click = || {}
+        execute_on_click = || {
+            val content: String = editor |> monaco::get_content()
+            val on_exec_compl: Fun() = || {
+                exec_button |> set_text_content(Option::Some("Run" |> as_js()))
+                click_handler = execute_on_click
+            }
+            match execute(content, output_elem, on_exec_compl) {
+                Some(stop) {
+                    exec_button |> set_text_content(Option::Some("Stop" |> as_js()))
+                    click_handler = || {
+                        stop()
+                        on_exec_compl()
+                    }
+                }
+                None {}
+            }
+        }
+        click_handler = execute_on_click
+        exec_button |> add_event_listener(
+            "click", Option::Some(|_| click_handler()), UNDEF
+        )
+    })
+}

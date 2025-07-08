@@ -1,0 +1,35 @@
+
+#intro-text {
+    height: 7rem;
+    font-size: 5rem;
+    font-weight: 1000;
+    font-family: "Jetbrains Mono";
+    color: var(--text);
+}
+
+.intro-subtext {
+    font-size: 1.25rem;
+}
+
+.horizontal-section-text-container {
+    flex-grow: 1;
+    top: 0px;
+    bottom: 0px;
+    position: relative;
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+.horizontal-section-text {
+    position: absolute;
+    top: 50%;
+    transform: translate(0%, -50%);
+    width: 100%;
+}
+
+.sub-header {
+    font-size: 3rem;
+    font-weight: 1000;
+    font-family: "Mona Sans";
+    color: var(--text);
+}
