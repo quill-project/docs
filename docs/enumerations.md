@@ -1,0 +1,4 @@
+
+# Enumerations
+
+Work in progress :)

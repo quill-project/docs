@@ -65,17 +65,17 @@ fun fibonacci() -> mut Stream[Int] {
     mut a = 0
     mut b = 1
     return Stream::new(|| {
-        val r = a
-        val c = a + b
-        a = b
-        b = c
-        return r
+        b = a + b
+        a = b - a
+        return a
     })
 }
 
-fun main() = fibonacci()
-    |> take(20)
-    |> for_each(println)
+fun main() {
+    for n: fibonacci() |> take(20) {
+        println(n)
+    }
+}
 </div>
             </div>
         </div>
@@ -87,24 +87,22 @@ struct Stack[T](top: Option[mut Node[T]])
 
 fun Stack::empty[T]() -> mut Stack[T] = Stack(Option::None)
 
-fun Stack::top[T](s: Stack[T]) -> Option[T] = s.top
-    |> map[mut Node[T], T](|n| n.value)
-
 fun Stack::push[T](s: mut Stack[T], value: T) {
     s.top = Option::Some(Node(value, s.top))
 }
 
-fun Stack::pop[T](s: mut Stack[T]) {
-    s.top |> map[mut Node[T], Unit](|n| { s.top = n.prev })
-}
+fun Stack::pop[T](s: mut Stack[T]) -> Option[T] = s.top |> map(|n| {
+    s.top = n.prev
+    return n.value
+})
 
 fun main() {
     val s: mut Stack[Int] = Stack::empty()
     s |> push(5)
     s |> push(10)
-    s |> top() |> println()
-    s |> pop()
-    s |> top() |> println()
+    s |> pop() |> println()
+    s |> pop() |> println()
+    s |> pop() |> println()
 }
 </div>
                 <div class="horizontal-section-text-container">
@@ -146,21 +144,21 @@ fun main() {
                     </div>
                 </div>
                 <div class="embedded-playground">
+
 fun fizzbuzz(n: Int, mappings: List[Pair[Int, String]]) -> String {
     val o: String = mappings |> values()
         |> filter(|m| n % m.first == 0)
-        |> map[Pair[Int, String], String](|m| m.second)
-        |> join("")
+        |> fold("", |r, m| r |> concat(m.second))
     return if o |> is_empty() { n |> as_string() } else { o }
 }
 
-val FIZZBUZZ_MAPPINGS: List[Pair[Int, String]] = List::of(
+val MAPPING: List[Pair[Int, String]] = List::of(
     Pair(3, "Fizz"), Pair(5, "Buzz"), Pair(7, "Bazz")
 )
 
-fun main() = range_incl(1, 100)
-    |> map[Int, String](|n| fizzbuzz(n, FIZZBUZZ_MAPPINGS))
-    |> for_each(println)
+fun main() = range_incl(1, 100) 
+    |> for_each(|i| fizzbuzz(i, MAPPING) |> println())
+
 </div>
             </div>
         </div>
