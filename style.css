@@ -23,6 +23,7 @@ body {
     font-family: 'Rubik';
     color: var(--text-muted);
     padding-bottom: 30rem;
+    overflow-x: hidden;
 }
 
 a {

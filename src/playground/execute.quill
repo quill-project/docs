@@ -37,10 +37,6 @@ pub fun execute(input: String, out: mut Element, on_end: Fun()) -> Option[Fun()]
     }
 }
 
-ext fun debug[T](value: T) = "
-    console.log(#var(value));
-"
-
 pub fun execute_compiled(compiled: String, out: mut Element, on_end: Fun()) -> Fun() {
     val worker_code: String = WORKER_DRIVER_START
         |> concat(compiled)

@@ -1,0 +1,315 @@
+{
+  "fileTypes": [
+    "quill"
+  ],
+  "name": "quill",
+  "patterns": [
+    {
+      "include": "#main"
+    }
+  ],
+  "scopeName": "source.quill",
+  "uuid": "8f285c78-2801-11ee-be56-0242ac120002",
+  "repository": {
+    "types": {
+      "patterns": [
+        {
+          "match": "\\b(mut)\\b",
+          "name": "storage.modifier.quill"
+        },
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "name": "entity.name.type.quill"
+        },
+        {
+          "match": "(->)",
+          "name": "keyword.operator.quill"
+        },
+        {
+          "match": "(\\(\\))",
+          "name": "punctuation.brackets.quill"
+        },
+        {
+          "begin": "(\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.brackets.quill"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#types"
+            }
+          ],
+          "end": "(\\))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.brackets.quill"
+            }
+          }
+        },
+        {
+          "match": "(\\[|\\]|\\(|\\))",
+          "name": "punctuation.brackets.quill"
+        }
+      ]
+    },
+    "argDecl": {
+      "patterns": [
+        {
+          "begin": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\:",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.other.quill"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#types"
+            }
+          ],
+          "end": "(?=,|\\))"
+        },
+        {
+          "begin": "(\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.separator.quill"
+            }
+          },
+          "patterns": [
+            {
+              "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+              "name": "entity.name.type.quill"
+            },
+            {
+              "match": "(,)",
+              "name": "punctuation.separator.quill"
+            }
+          ],
+          "end": "(\\])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.separator.quill"
+            }
+          }
+        },
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b",
+          "name": "variable.other.quill"
+        }
+      ]
+    },
+    "main": {
+      "patterns": [
+        {
+          "match": "(//.*)",
+          "name": "comment.quill"
+        },
+        {
+          "begin": "\\b(fun)\\s+((?:[a-zA-Z_][a-zA-Z0-9_]*\\:\\:)*)([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\[.*?\\]\\s*\\(|\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "storage.modifier.quill"
+            },
+            "3": {
+              "name": "entity.name.function.quill"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#argDecl"
+            },
+            {
+              "begin": "(->)",
+              "beginCaptures": {
+                "1": {
+                  "name": "keyword.operator.quill"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "#types"
+                }
+              ],
+              "end": "(?=\\{|\\=)"
+            }
+          ],
+          "end": "(\\{|\\=)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.separator.quill"
+            }
+          }
+        },
+        {
+          "begin": "\\b(enum|struct)\\s+((?:[a-zA-Z_][a-zA-Z0-9_]*\\:\\:)*)([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\[.*?\\]\\s*\\(|\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "storage.modifier.quill"
+            },
+            "3": {
+              "name": "entity.name.type.quill"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#argDecl"
+            }
+          ],
+          "end": "(\\))",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.separator.quill"
+            }
+          }
+        },
+        {
+          "begin": "\\b(val|mut)\\s+((?:[a-zA-Z_][a-zA-Z0-9_]*\\:\\:)*)([a-zA-Z_][a-zA-Z0-9_]*)(\\:)",
+          "beginCaptures": {
+            "1": {
+              "name": "storage.modifier.quill"
+            },
+            "3": {
+              "name": "variable.other.quill"
+            },
+            "4": {
+              "name": "punctuation.separator.quill"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#types"
+            }
+          ],
+          "end": "(\\=)",
+          "endCaptures": {
+            "1": {
+              "name": "keyword.operator.quill"
+            }
+          }
+        },
+        {
+          "match": "\\b(if|else|return|match|while|for|continue|break)\\b",
+          "name": "keyword.control.quill"
+        },
+        {
+          "match": "\\b(ext|fun|val|mut|mod|use|pub|struct|enum)\\b",
+          "name": "storage.modifier.quill"
+        },
+        {
+          "match": "\\b(as)\\b",
+          "name": "keyword.other.quill"
+        },
+        {
+          "match": "\\b(true|false|unit)\\b",
+          "name": "constant.language.quill"
+        },
+        {
+          "match": "(([0-9]*\\.)?[0-9]+)",
+          "name": "constant.numeric.quill"
+        },
+        {
+          "match": "(->|&&|<|>|=|\\+|-|\\*|\\/|%|!|\\.|\\|)",
+          "name": "keyword.operator.quill"
+        },
+        {
+          "begin": "(\\\")",
+          "beginCaptures": {
+            "1": {
+              "name": "string.quoted.double.quill"
+            }
+          },
+          "patterns": [
+            {
+              "match": "(\\\\x[a-fA-F0-9]{2})",
+              "name": "constant.character.escape.quill"
+            },
+            {
+              "match": "(\\\\.)",
+              "name": "constant.character.escape.quill"
+            },
+            {
+              "match": "(?<!\\\\)([^\\\\\"]+)",
+              "name": "string.quoted.double.quill"
+            }
+          ],
+          "end": "(?<!(?<!\\\\)\\\\)(\\\")",
+          "endCaptures": {
+            "1": {
+              "name": "string.quoted.double.quill"
+            }
+          }
+        },
+        {
+          "begin": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\[.*?\\]\\s*\\(|\\()",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.function.quill"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#types"
+            }
+          ],
+          "end": "(\\]|\\()",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.brackets.quill"
+            }
+          }
+        },
+        {
+          "begin": "\\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\\[.*?\\])",
+          "beginCaptures": {
+            "1": {
+              "name": "variable.other.quill"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#types"
+            }
+          ],
+          "end": "(\\])",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.brackets.quill"
+            }
+          }
+        },
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(\\()",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.quill"
+            },
+            "2": {
+              "name": "punctuation.brackets.quill"
+            }
+          }
+        },
+        {
+          "match": "([a-zA-Z_][a-zA-Z0-9_]*\\b(?!\\:\\:))",
+          "name": "variable.other.quill"
+        },
+        {
+          "match": "(\\(|\\)|\\[|\\]|\\{|\\})",
+          "name": "punctuation.brackets.quill"
+        },
+        {
+          "match": "(,|\\:)",
+          "name": "punctuation.separator.quill"
+        }
+      ]
+    },
+    "main__1": {
+      "patterns": [
+        {
+          "include": "#main"
+        }
+      ]
+    }
+  }
+}

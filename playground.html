@@ -4,6 +4,16 @@
         <meta charset="utf-8">
         <title>The Quill Programming Language</title>
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="playground.css">
+        <script>
+            // what Quill functions to execute on this page
+            window.pageFeatures = [
+                "full-playground"
+            ];
+        </script>
+        <script src="https://unpkg.com/monaco-editor@0.45.0/min/vs/loader.js"></script>
+        <script type="module" src="monaco_grammars.js"></script>
+        <script src=".quill/docs.js"></script>
     </head>
     <body>
         <div class="navbar">
@@ -13,6 +23,7 @@
                     <a class="logo-text" href="index.html">The Quill Programming Langage</a>
                 </div>
             </div>
+            <button id="exec-button">Run</button>
             <div class="items-container">
                 <div class="items-list">
                     <a class="navbar-item" href="tour.html">Documentation</a>
@@ -22,12 +33,10 @@
                 </div>
             </div>
         </div>
-        <div class="page-section gradiant-section-background-primary">
-            <div class="section-content-center-wide">
-                <h1>Work in progress :)</h1>
-                <p>Come back in a day or two to view this page.</p>    
-                <button onclick="window.open('index.html', '_self')">Go Back</a>
-            </div>
+        <div class="editors">
+            <div class="editor-container" id="quill-editor"></div>
+            <div class="editor-container" id="js-editor"></div>
+            <div class="editor-container" id="output"></div>
         </div>
     </body>
 </html>

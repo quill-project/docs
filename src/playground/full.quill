@@ -1,0 +1,101 @@
+
+mod docs::playground
+
+use docs::*
+use js::*
+use frontend::*
+
+val DEF_QUILL_CNTNT: String = "
+mod playground
+
+fun main() {
+    println(\"Hello, world!\")
+}
+"
+
+pub fun full() {
+    val doc: mut Document = WINDOW |> document()
+    val exec_button: mut Element = doc |> get_element_by_id("exec-button")
+        |> expect("No element with ID 'exec-button' on page!")
+    val q_editor_elem: mut Element = doc |> get_element_by_id("quill-editor")
+        |> expect("No element with ID 'quill-editor' on page!")
+    val js_editor_elem: mut Element = doc |> get_element_by_id("js-editor")
+        |> expect("No element with ID 'js-editor' on page!")
+    val output_elem: mut Element = doc |> get_element_by_id("output")
+        |> expect("No element with ID 'output' on page!")
+    val with_editors: Fun(JsObject, JsObject) = |q_editor, js_editor| {
+        mut click_handler: Fun() = || {}
+        mut execute_on_click = || {}
+        execute_on_click = || {
+            output_elem |> set_text_content(Option::None)
+            val input: String = q_editor |> monaco::get_content()
+            val on_exec_compl: Fun() = || {
+                exec_button |> set_text_content(Option::Some("Run" |> as_js()))
+                click_handler = execute_on_click
+            }
+            match compile(input) {
+                Ok(compiled) {
+                    js_editor |> monaco::set_content(filter_stdlib(compiled))
+                    val stop: Fun() = execute_compiled(
+                        compiled, output_elem, on_exec_compl
+                    )
+                    exec_button |> set_text_content(Option::Some("Stop" |> as_js()))
+                    click_handler = || {
+                        stop()
+                        on_exec_compl()
+                    }
+                }
+                Err(errors) {
+                    js_editor |> monaco::set_content("// compilation error")
+                    output_elem |> set_text_content(Option::Some(
+                        errors |> as_js()
+                    ))
+                }
+            }
+        }
+        click_handler = execute_on_click
+        exec_button |> add_event_listener(
+            "click", Option::Some(|_| click_handler()), UNDEF
+        )
+    }
+    monaco::init(q_editor_elem, DEF_QUILL_CNTNT, "quill" |> as_js(), false, false) 
+    |> map[JsObject, Unit](|q_editor| {
+        monaco::init(js_editor_elem, "", "javascript" |> as_js(), false, true)
+        |> map[JsObject, Unit](|js_editor| {
+            with_editors(q_editor, js_editor)
+        })
+    })
+}
+
+fun find_next_scoped(input: String, target: String) -> Option[Int] {
+    mut depth = 0
+    for i: input |> indices() {
+        val rem: String = input |> slice_from(i)
+        match rem |> at(0) {
+            "(" | "{" | "[" { depth = depth + 1 }
+            ")" | "}" | "]" { depth = depth - 1 }
+            _ {}
+        }
+        if depth > 0 { continue }
+        if rem |> starts_with(target) { return Option::Some(i) }
+    }
+    return Option::None
+}
+
+fun filter_output(input: String, start: String, end: String) -> String {
+    mut curr: String = input
+    Sequence::new[Int](|| curr |> find(start) |> next()) |> for_each(|start_i| {
+        val before: String = curr |> slice_to(start_i)
+        val at: String = curr |> slice_from(start_i)
+        val after_i: Int = find_next_scoped(at, end)
+            |> map[Int, Int](|i| i + (end |> length())) 
+            |> unwrap_or(curr |> length())
+        val after: String = at |> slice_from(after_i)
+        curr = before |> concat(after)
+    })
+    return curr
+}
+
+fun filter_stdlib(input: String) -> String = input
+    |> filter_output("function std", "\n\n")
+    |> filter_output("const std", "\n\n")

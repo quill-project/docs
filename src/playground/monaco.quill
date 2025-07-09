@@ -11,30 +11,51 @@ ext fun configure() = "
 
 val CONFIGURED: Unit = configure()
 
-pub ext fun init(container: mut Element, value: String) -> Promise[JsObject] = "
+pub ext fun init(
+    container: mut Element, value: String, language: JsValue, 
+    minimal: Bool, readonly: Bool
+) -> Promise[JsObject] = "
     return new Promise((resolve, reject) => {
-        require(['vs/editor/editor.main'], function() {
-            resolve(monaco.editor.create(#var(container), {
-                value: #var(value),
-                // language: 'javascript',
-                theme: 'vs-dark',
-                lineNumbers: 'off',
-                minimap: { enabled: false },
-                fontFamily: 'JetBrains Mono',
-                fontWeight: '700',
-                fontLigatures: true,
-                guides: {
-                    indentation: false,
-                    highlightActiveIndentation: false,
-                },
-                bracketPairColorization: { enabled: false },
-                scrollBeyondLastLine: false,
-                renderLineHighlightOnlyWhenFocus: true,
-                overviewRulerLanes: 0
-            }));
-        });
+        const create = theme => {
+            window.colorTheme = theme;
+            require(['vs/editor/editor.main'], function() {
+                monaco.editor.defineTheme('customtheme', theme);
+                monaco.editor.setTheme('customtheme');
+                const editor = monaco.editor.create(#var(container), {
+                    value: #var(value),
+                    language: #var(language),
+                    lineNumbers: (#var(minimal)? 'off' : 'on'),
+                    minimap: { enabled: false },
+                    fontFamily: 'JetBrains Mono',
+                    fontWeight: '700',
+                    fontLigatures: true,
+                    guides: {
+                        indentation: !#var(minimal),
+                        highlightActiveIndentation: !#var(minimal),
+                    },
+                    bracketPairColorization: { enabled: false },
+                    scrollBeyondLastLine: !#var(minimal),
+                    renderLineHighlightOnlyWhenFocus: true,
+                    overviewRulerLanes: (#var(minimal)? 0 : 3),
+                    readOnly: #var(readonly)
+                });
+                window.editors.push(editor);
+                window.wireEditorGrammars();
+                resolve(editor);
+            });
+        };
+        if(window.colorTheme !== undefined) {
+            create(window.colorTheme);
+        } else {
+            fetch('res/Dracula-darker-contrast-new-color-modified.json')
+                .then(r => r.json())
+                .then(create);
+        }
     });
 "
+
+pub ext fun set_content(editor: JsObject, value: String)
+    = "#var(editor).setValue(#var(value));"
 
 pub ext fun get_content(editor: JsObject) -> String
     = "return #var(editor).getValue();"

@@ -36,7 +36,7 @@ fun init_embedded(container: mut Element) {
     exec_button |> class_list() |> add("embedded-playground-button")
     exec_button |> set_text_content(Option::Some("Run" |> as_js()))
     console_elem |> append_child(exec_button |> as_mnode())
-    monaco::init(editor_elem, value) |> map[JsObject, Unit](|editor| {
+    monaco::init(editor_elem, value, "quill" |> as_js(), true, false) |> map[JsObject, Unit](|editor| {
         mut click_handler: Fun() = || {}
         mut execute_on_click = || {}
         execute_on_click = || {
