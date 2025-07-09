@@ -12,7 +12,6 @@ In the following documents you will learn everything you need to read and write 
 
 ### All Documents
 
-0. [Introduction](introduction.md)
 1. [Types](types.md)
 2. [Functions](functions.md)
 3. [Variables](variables.md)
