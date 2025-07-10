@@ -22,7 +22,7 @@ Additionally, Quill programs may define custom types for specific cases. These a
 
 ### Structures
 
-[Structures](`structures.md`) are custom types that consist of multiple values of other types. For example, consider this definition of a `Cat`:
+[Structures](structures.md) are custom types that consist of multiple values of other types. For example, consider this definition of a `Cat`:
 ```
 struct Cat(name: String, age: Int)
 ```
@@ -56,7 +56,7 @@ enum User(
 Here we define a `User` to be one of three possible values: 
 - A `Guest`, which has no data associated with it
 - A `Member`, which has a `String` value associated with it (possibly the username)
-- An `Admin`, which has an `Int` value associated wit hit (possibly the admin number)
+- An `Admin`, which has an `Int` value associated wit hit (possibly an admin number)
 
 This means that if something is of type `User`, we can use any of the three defined values, provided we also give a value of the specified type (if there is any):
 ```
@@ -74,4 +74,4 @@ Color::Green
 Color::Blue
 ```
 
-Equality checks can be used to check for a specific value and [pattern matching](match.md) to extract the associated value.
+[Equality checks](operators.md) can be used to check for a specific value and [pattern matching](control_flow.md) can be used to extract the associated value.

@@ -1,4 +1,4 @@
 
-# Pattern Matching
+# Templates
 
 Work in progress :)

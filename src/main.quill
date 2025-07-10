@@ -19,7 +19,8 @@ val REQUESTED_FEATURES: List[String] = global("pageFeatures")
 val FEATURES: Map[String, Fun()] = Map::of(
     Pair("intro-text-anim", intro::text_anim),
     Pair("embedded-playgrounds", playground::embedded),
-    Pair("full-playground", playground::full)
+    Pair("full-playground", playground::full),
+    Pair("render-current-document", render_current_document)
 )
 
 fun on_page_load(_: mut Event) {

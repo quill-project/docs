@@ -22,4 +22,5 @@ In the following documents you will learn everything you need to read and write 
 8. [Enumerations](enumerations.md)
 9. [Anonymous Functions](closures.md)
 10. [Modules](modules.md)
-11. [External Functions](externals.md)
+11. [Templates](templates.md)
+12. [External Functions](externals.md)
