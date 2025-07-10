@@ -68,6 +68,10 @@ fun make_link_button(id: Int, next: Bool) -> mut Element {
 }
 
 pub fun render_document(id: Int) {
+    val page_document: mut Document = WINDOW |> document()
+    val page_element: mut Element = page_document 
+        |> first_element_child() 
+        |> expect("Document has no <html> tag!")
     val new_url: String = WINDOW |> location() 
         |> pathname()
         |> concat("?")
@@ -77,12 +81,13 @@ pub fun render_document(id: Int) {
         "",
         Option::Some(new_url)
     )
-    val out: mut Element = WINDOW |> document() 
+    val out: mut Element = page_document
         |> get_element_by_id("doc")
         |> expect("Document has no element with ID 'doc'!")
     val doc_name: String = (DOCUMENTS |> at(id)).second
     val doc_path: String = DOCUMENTS_BASE_DIR |> concat(doc_name)
     val insert_result: Fun(String) = |html| {
+        page_element |> set_scroll_top(0.0)
         out |> set_inner_html(html |> replace_document_refs() |> as_js())
         playground::embedded()
         if id > 0 {
