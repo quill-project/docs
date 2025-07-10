@@ -31,7 +31,7 @@ pub fun execute(input: String, out: mut Element, on_end: Fun()) -> Option[Fun()]
             return execute_compiled(compiled, out, on_end) |> Option::Some()
         }
         Err(errors) {
-            out |> set_text_content(Option::Some(errors |> as_js()))
+            write_colored(errors, out)
             return Option::None
         }
     }
@@ -51,15 +51,7 @@ pub fun execute_compiled(compiled: String, out: mut Element, on_end: Fun()) -> F
         workerUrl, WorkerOptions::default()
     )
     val stdout_write: Fun(String) = |text| {
-        val old_content = out 
-            |> text_content() 
-            |> map(String::from_js) 
-            |> unwrap_or("")
-        out |> set_text_content(Option::Some(old_content 
-            |> concat(text) 
-            |> concat("\n")
-            |> as_js()
-        ))
+        write_colored(text |> concat("\n"), out)
         out |> set_scroll_top(out |> scroll_height() |> as_float())
     }
     worker |> set_onmessage(Option::Some(|event_js| {
@@ -117,7 +109,7 @@ pub fun compile(input: String) -> Result[String, String] {
     // report messages and exit if has any errors
     if messages |> values() |> any(Message::is_error) {
         val errors: String = messages |> values() 
-            |> map[Message, String](|m| m |> display(sources, false))
+            |> map[Message, String](|m| m |> display(sources, true))
             |> join("\n\n")
         return Result::Err(errors)
     }
@@ -126,7 +118,7 @@ pub fun compile(input: String) -> Result[String, String] {
     // report messages and exit if has any errors
     if messages |> values() |> any(Message::is_error) {
         val errors: String = messages |> values() 
-            |> map[Message, String](|m| m |> display(sources, false))
+            |> map[Message, String](|m| m |> display(sources, true))
             |> join("\n\n")
         return Result::Err(errors)
     }

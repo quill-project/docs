@@ -1,0 +1,97 @@
+
+mod docs::playground
+
+use docs::*
+use js::*
+use frontend::*
+
+val SEQ_START: String = "\x1B["
+
+val CLASS_MAPPINGS: Map[Int, String] = Map::of(
+    Pair(  1, "playground-out-bold"),
+    Pair(  3, "playground-out-italic"),
+    Pair( 30, "playground-out-fg-black"),
+    Pair( 31, "playground-out-fg-red"),
+    Pair( 32, "playground-out-fg-green"),
+    Pair( 33, "playground-out-fg-yellow"),
+    Pair( 34, "playground-out-fg-blue"),
+    Pair( 35, "playground-out-fg-magenta"),
+    Pair( 36, "playground-out-fg-cyan"),
+    Pair( 37, "playground-out-fg-white"),
+    Pair( 90, "playground-out-fg-bright-black"),
+    Pair( 91, "playground-out-fg-bright-red"),
+    Pair( 92, "playground-out-fg-bright-green"),
+    Pair( 93, "playground-out-fg-bright-yellow"),
+    Pair( 94, "playground-out-fg-bright-blue"),
+    Pair( 95, "playground-out-fg-bright-magenta"),
+    Pair( 96, "playground-out-fg-bright-cyan"),
+    Pair( 97, "playground-out-fg-bright-white"),
+    Pair( 40, "playground-out-bg-black"),
+    Pair( 41, "playground-out-bg-red"),
+    Pair( 42, "playground-out-bg-green"),
+    Pair( 43, "playground-out-bg-yellow"),
+    Pair( 44, "playground-out-bg-blue"),
+    Pair( 45, "playground-out-bg-magenta"),
+    Pair( 46, "playground-out-bg-cyan"),
+    Pair( 47, "playground-out-bg-white"),
+    Pair(100, "playground-out-bg-bright-black"),
+    Pair(101, "playground-out-bg-bright-red"),
+    Pair(102, "playground-out-bg-bright-green"),
+    Pair(103, "playground-out-bg-bright-yellow"),
+    Pair(104, "playground-out-bg-bright-blue"),
+    Pair(105, "playground-out-bg-bright-magenta"),
+    Pair(106, "playground-out-bg-bright-cyan"),
+    Pair(107, "playground-out-bg-bright-white")
+)
+
+fun is_fg_color_code(code: Int) -> Bool 
+    = (30 <= code && code <= 37) || (90 <= code && code <= 97)
+
+fun is_bg_color_code(code: Int) -> Bool
+    = (40 <= code && code <= 47) || (100 <= code && code <= 107)
+
+pub fun write_colored(input: String, out: mut Element) {
+    mut rem: String = input
+    mut codes: mut List[Int] = List::empty()
+    val push_span: Fun(Int) = |to_idx| {
+        val content: String = rem |> slice_to(to_idx)
+        val s: mut Element = WINDOW |> document()
+            |> create_element_str("span")
+        for code: codes |> values() {
+            val class: String = CLASS_MAPPINGS |> get(code) 
+                |> expect("ANSI color sequence uses unsupported code!")
+            s |> class_list() |> add(class)
+        }
+        s |> set_text_content(Option::Some(content |> as_js()))
+        out |> append_child(s |> as_mnode())
+    }
+    Sequence::new[Int](|| rem |> find(SEQ_START) |> next()) |> for_each(|i| {
+        push_span(i)
+        val inside: String = rem |> slice_from(i + (SEQ_START |> length()))
+        val inside_end: Int = inside |> find("m") 
+            |> next() |> expect("Unclosed ANSI color sequence!")
+        if inside_end == 0 {
+            codes |> clear()
+        }
+        for code_s: inside |> slice_to(inside_end) |> split(";") {
+            val code: Int = Int::parse(code_s) 
+                |> expect("Invalid ANSI color sequence!")
+            if code == 0 {
+                codes |> clear()
+                continue
+            }
+            if is_fg_color_code(code) {
+                codes = codes |> values()
+                    |> filter(!is_fg_color_code) |> List::collect()
+            }
+            if is_bg_color_code(code) {
+                codes = codes |> values()
+                    |> filter(!is_bg_color_code) |> List::collect()
+            }
+            codes |> push(code)
+        }
+        rem = inside |> slice_from(inside_end + 1)
+    })
+    if rem |> is_empty() { return unit }
+    push_span(rem |> length())
+}

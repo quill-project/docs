@@ -47,9 +47,7 @@ pub fun full() {
                 }
                 Err(errors) {
                     js_editor |> monaco::set_content("// compilation error")
-                    output_elem |> set_text_content(Option::Some(
-                        errors |> as_js()
-                    ))
+                    write_colored(errors, output_elem)
                 }
             }
         }
