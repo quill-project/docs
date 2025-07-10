@@ -41,8 +41,8 @@
     border-radius: 0.1rem;
     line-height: 1.5rem;
     color: var(--secondary);
-    font-family: "Fira Code";
-    font-size: 0.8rem;
+    font-family: "Jetbrains Mono";
+    font-size: 0.9rem;
 }
 
 #doc pre code {
