@@ -43,6 +43,7 @@
     color: var(--secondary);
     font-family: "Jetbrains Mono";
     font-size: 0.9rem;
+    white-space: pre-wrap;
 }
 
 #doc pre code {

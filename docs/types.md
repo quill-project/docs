@@ -11,8 +11,8 @@ The Quill language has a number of built-in types:
 |-|-|-|
 |`Unit`|`unit`|Used to describe the absence of a value; since there is only one value of type `Unit`, it cannot be used to store any data
 |`Bool`|`true` or `false`|Used to express logical conditions|
-|`Int`|min. `-(2^63)` to max. `(2^63)-1`, e.g. `5`, `-10`|Used to represent any negative or positive integer (64-bit signed integer)|
-|`Float`|min. `-∞` to max. `+∞`, e.g. `3.14`, `-42.0`|Used to represent any real number to a certain degree of precision (IEEE 754 double precision float)|
+|`Int`|min. `-(2^63)` to max. `(2^63)-1`, e.g. `5`, `-10`|Used to represent any negative or positive whole number (64-bit signed integer)|
+|`Float`|min. `-∞` to max. `+∞`, e.g. `3.14`, `-42.0`|Used to represent any real (fractional) number to a certain degree of precision (IEEE 754 double precision float)|
 |`String`|Any Unicode text, e.g. `"Hello"`|A collection of unicode code points (characters) that can represent any piece of text (does not expose encoding)|
 |`Fun(A, B, ...) -> R`|Any function, e.g. `\|x\| x * 2`|Represents a function that may be called with arguments of types `A`, `B`, ... (and so on) and which returns a value of type `R` (`R=Unit` if not specified)
 
