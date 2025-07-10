@@ -84,6 +84,7 @@ pub fun render_document(id: Int) {
     val doc_path: String = DOCUMENTS_BASE_DIR |> concat(doc_name)
     val insert_result: Fun(String) = |html| {
         out |> set_inner_html(html |> replace_document_refs() |> as_js())
+        playground::embedded()
         if id > 0 {
             val prev_b: mut Element = make_link_button(id - 1, false)
             out |> append_child(prev_b |> as_mnode())

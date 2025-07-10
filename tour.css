@@ -41,6 +41,8 @@
     border-radius: 0.1rem;
     line-height: 1.5rem;
     color: var(--secondary);
+    font-family: "Fira Code";
+    font-size: 0.8rem;
 }
 
 #doc pre code {
@@ -52,4 +54,15 @@
     background: var(--bg-front);
     padding: 0.5rem;
     border-radius: 0.25rem;
+}
+
+#doc pre:has(.embedded-playground) {
+    background: none;
+    padding: none;
+}
+
+#doc .embedded-playground {
+    width: 100%;
+    resize: vertical;
+    overflow: hidden;
 }

@@ -5,13 +5,15 @@
         <title>The Quill Programming Language</title>
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="tour.css">
-        <script src="https://cdn.jsdelivr.net/npm/marked@16.0.0/lib/marked.umd.min.js"></script>
         <script>
             // what Quill functions to execute on this page
             window.pageFeatures = [
                 "render-current-document"
             ];
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/marked@16.0.0/lib/marked.umd.min.js"></script>
+        <script src="https://unpkg.com/monaco-editor@0.45.0/min/vs/loader.js"></script>
+        <script type="module" src="monaco_grammars.js"></script>
         <script src=".quill/docs.js"></script>
     </head>
     <body>

@@ -38,7 +38,8 @@ pub ext fun init(
                     scrollBeyondLastLine: !#var(minimal),
                     renderLineHighlightOnlyWhenFocus: true,
                     overviewRulerLanes: (#var(minimal)? 0 : 3),
-                    readOnly: #var(readonly)
+                    readOnly: #var(readonly),
+                    automaticLayout: true
                 });
                 window.editors.push(editor);
                 window.wireEditorGrammars();
