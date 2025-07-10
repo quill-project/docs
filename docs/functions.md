@@ -43,6 +43,8 @@ fun main() {
 }
 </div></pre>
 
+**Function names by convention shall be written in snake case, e.g. `read_file`, `get_element_by_id`, ...**
+
 ## Returning
 
 Functions that specify a return type and are implemented using `{ ... }` need a mechanism to declare a result value - this is where `return` comes in.

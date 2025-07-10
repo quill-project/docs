@@ -10,12 +10,12 @@ pub val DOCUMENTS: List[Pair[String, String]] = List::of(
     Pair("Functions",           "functions.md"   ),
     Pair("Variables",           "variables.md"   ),
     Pair("Constants",           "constants.md"   ),
+    Pair("Modules",             "modules.md"     ),
     Pair("Operators",           "operators.md"   ),
     Pair("Control Flow",        "control_flow.md"),
     Pair("Structures",          "structures.md"  ),
     Pair("Enumerations",        "enumerations.md"),
     Pair("Anonymous Functions", "closures.md"    ),
-    Pair("Modules",             "modules.md"     ),
     Pair("Templates",           "templates.md"   ),
     Pair("External Functions",  "externals.md"   )
 )

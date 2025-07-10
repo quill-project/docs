@@ -14,6 +14,8 @@ fun main() {
 }
 </div></pre>
 
+**Variable names by convention shall be written in snake case, e.g. `current_idx`, `next_value`, ...**
+
 ## Mutable variables
 
 Variables declared using the `val`-keyword have one key limitation - once they have been created, no new value may be assigned to them. For that reason the following program will lead to an error:

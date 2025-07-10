@@ -7,7 +7,7 @@
     font-size: 1rem; 
 }
 #doc .link-button-sub { 
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--text-muted);
 }
 #doc button:hover .link-button-sub {
@@ -42,8 +42,13 @@
     line-height: 1.5rem;
     color: var(--secondary);
     font-family: "Jetbrains Mono";
+    font-weight: 700;
     font-size: 0.9rem;
     white-space: pre-wrap;
+}
+
+#doc a code {
+    color: var(--primary);
 }
 
 #doc pre code {
