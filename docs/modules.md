@@ -77,3 +77,43 @@ fun main() {
 *A `use` statement always takes effect from the last `mod`-declaration up to the next `mod`-declaration or the end of the file. Its position in the file has no effect, meaning a `use`-statement can influence symbols written above it (up to the last `mod`-statement).*
 
 *After every `mod <MODULE>`-statement `use std::*` and `use <MODULE>::*` are implicitly applied.*
+
+## Symbol Names
+
+The names of symbols such as functions, constants or type definitions may contain a module name using `::` - the last part of the path will become the name of the symbol, and the symbol will be placed in the specified module inside of the current module.
+```
+mod example
+
+fun fun_stuff::do_stuff() {}
+```
+In the above example `do_stuff` is a function in the module `example::fun_stuff`, giving it the full path `example::fun_stuff::do_stuff`. Code inside of the symbol still behaves as if it was defined in the *current module*, NOT the module that the symbol will actually be placed inside of.
+
+By convention this is used when a function is associated with some type to place the function in a module that shares its name with the type the function is associated with:
+```
+mod example
+
+pub struct Cat(name: String, age: Int)
+
+pub fun Cat::plus(lhs: Cat, rhs: Cat) -> Cat {
+    return Cat("unnnamed", 0)
+}
+```
+This implements the `+`-operator for a custom type `Cat`. This convention is also useful for calling functions associated with [generic types](templates.md) and when using [the `|>`-operator](operators.md).
+
+## Absolute Paths of Built-in Types
+
+For normal types, their absolute or full paths are the module they are defined in + their names. However, the built-in types are never explicitly declared anywhere - they are defined by the language itself. They do however still need to have absolute paths for several purposes, so their absolute paths are defined to be the following:
+|Type|Absolute Path|
+|-|-|
+|`Unit`|`std::Unit`|
+|`Bool`|`std::Bool`|
+|`Int`|`std::Int`|
+|`Float`|`std::Float`|
+|`String`|`std::String`|
+|`Fun() -> R`|`std::Fun0`|
+|`Fun(A) -> R`|`std::Fun1`|
+|`Fun(A, B) -> R`|`std::Fun2`|
+|`Fun(A, B, C) -> R`|`std::Fun3`|
+|`Fun(A, B, C, ...) -> R`|`std::FunN`|
+
+*As seen above the absolute path of a function type is `std::FunN`, where `N` is the number of arguments the function receives.*

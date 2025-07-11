@@ -22,10 +22,10 @@ Any function can be invoked (or called) by writing its name, followed by the pro
 
 Apart from being the entry point the main function isn't special in any other way - all other functions are defined in a similar manner. The general forms for function declarations are:
 ```
-fun <NAME>(<ARGS>) { ... }
-fun <NAME>(<ARGS>) = ...
-fun <NAME>(<ARGS>) -> <RETURN_TYPE> { ... }
-fun <NAME>(<ARGS>) -> <RETURN_TYPE> = ...
+fun <NAME>(<ARG>: <TYPE>, <ARG>: <TYPE>, ...) { ... }
+fun <NAME>(<ARG>: <TYPE>, <ARG>: <TYPE>, ...) = ...
+fun <NAME>(<ARG>: <TYPE>, <ARG>: <TYPE>, ...) -> <RETURN_TYPE> { ... }
+fun <NAME>(<ARG>: <TYPE>, <ARG>: <TYPE>, ...) -> <RETURN_TYPE> = ...
 ```
 A function that does not specify a return type using `-> <RETURN_TYPE>` always implicitly returns `Unit` (which represents the absence of any data). 
 
