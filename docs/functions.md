@@ -45,6 +45,10 @@ fun main() {
 
 **Function names by convention shall be written in snake case, e.g. `read_file`, `get_element_by_id`, ...**
 
+**Function argument names by convention shall be written snake case.**
+
+*There may be multiple arguments with the same name, in which case the name references the last argument from the argument list.*
+
 ## Returning
 
 Functions that specify a return type and are implemented using `{ ... }` need a mechanism to declare a result value - this is where `return` comes in.
@@ -65,5 +69,19 @@ fun display(n: Int) {
 fun main() {
     println(greet("world"))
     display(5)
+}
+</div></pre>
+
+## Variadic Arguments
+
+The last argument of a function may be marked as variadic by writing `...` before the argument name. This requires the type of the argument to be [a `List[T]`](templates.md). The argument itself becomes optional since any number of arguments of type `T` may be passed at and after that position in the argument list:
+
+<pre><div class="embedded-playground" style="height: 16rem">
+fun display_numbers(...numbers: List[Int]) {
+    println(numbers)
+}
+
+fun main() {
+    display_numbers(1, 2, 3)
 }
 </div></pre>

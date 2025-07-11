@@ -1,7 +1,7 @@
 
 # Constants
 
-Constants work similar to [variables](variables.md), except that they are defined outside of any particular function - in addition they *must* use `val` (meaning reassignments are never allowed) and must always specify a value type.
+Constants work similar to [variables](variables.md), except that they are defined outside of any particular function - in addition they *must* use `val` (meaning reassignments are never allowed) and must always specify a type.
 
 <pre><div class="embedded-playground" style="height: 13.5rem">
 val PI: Float = 3.1415
