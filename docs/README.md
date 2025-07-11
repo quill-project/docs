@@ -21,7 +21,7 @@ The documents were written with the following reading order in mind (although th
 5. [Modules](modules.md)
 6. [Operators](operators.md)
 7. [Control Flow](control_flow.md)
-8. [Literals](literals.d)
+8. [Literals](literals.md)
 9. [Structures](structures.md)
 10. [Enumerations](enumerations.md)
 11. [Anonymous Functions](closures.md)
