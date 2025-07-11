@@ -71,7 +71,7 @@ struct Cat(name: String, age: Int)
 fun display_cat(c: Cat) {
     match c {
         Cat("Snowball", _) { 
-            println("Hello, Snowball!") 
+            println("YAYYYYYYYYY HELLO SNOWBALL!!!") 
         }
         Cat(name, 0) {
             println(String::fmt("_ is very young!", name)) 
@@ -85,7 +85,7 @@ fun display_cat(c: Cat) {
     }
 }
 
-fun main() = display_cat(Cat("Bob", 3))
+fun main() = display_cat(Cat("Bob", 3)) // try changing these values!
 </div></pre>
 
 ## Loops
@@ -95,11 +95,12 @@ The `while`-statement allows you to repeat a list of statements while a given co
 while <COND> { ... }
 ```
 
-<pre><div class="embedded-playground" style="height: 15rem">
+<pre><div class="embedded-playground" style="height: 16rem">
 fun main() {
     mut i = 0
     while i < 20 {
         println(i)
+        i = i + 1
     }
 }
 </div></pre>

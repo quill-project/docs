@@ -13,8 +13,27 @@ The Quill language has a number of built-in types:
 |`Bool`|`true` or `false`|Used to express logical conditions|
 |`Int`|min. `-(2^63)` to max. `(2^63)-1`, e.g. `5`, `-10`|Used to represent any negative or positive whole number (64-bit signed integer)|
 |`Float`|min. `-∞` to max. `+∞`, e.g. `3.14`, `-42.0`|Used to represent any real (fractional) number to a certain degree of precision (IEEE 754 double precision float)|
-|`String`|Any Unicode text, e.g. `"Hello"`|A collection of unicode code points (characters) that can represent any piece of text. The encoding is never exposed and indexing into a string always takes longer the higher the index number is (linear time complexity), since it scans the string up to that point|
+|`String`|Any Unicode text, e.g. `"Hello"`|A collection of unicode code points (characters) that can represent any piece of text. Indexing into a string always done in code points (linear time complexity!)|
 |`Fun(A, B, ...) -> R`|Any function, e.g. `\|x\| x * 2`|Represents a function that may be called with arguments of types `A`, `B`, ... (and so on) and which returns a value of type `R` (`R=Unit` if not specified)
+
+## Type Conversions
+
+Note that Quill does NOT allow for implicit conversions between any types. All conversions must be explicit, including between `Int` and `Float`.
+
+The following table shows how to convert some variable `x` between built-in types:
+|↓From \\ To→|`Unit`|`Bool`|`Int`|`Float`|`String`|
+|--------|-|-|-|-|-|
+|`Unit`  |–|`false`¹|`0`¹|`0.0`¹|`Unit::as_string(x)`|
+|`Bool`  |`unit`|–|`if x { 1 } else { 0 }`¹|`if x { 1.0 } else { 0.0 }`¹|`Bool::as_string(x)`|
+|`Int`   |`unit`|`x != 0`²|–|`Int::as_float(x)`|`Int::as_string(x)`|
+|`Float` |`unit`|`x != 0.0`²|`Float::as_int(x)`|–|`Float::as_string(x)`|
+|`String`|`unit`|`!String::is_empty(x)`²|`Int::parse(x)`³|`Float::parse(x)`³|–|
+
+*¹ Arbitrary value(s), change to suit needs*
+
+*² Most common way to convert to a boolean, change to suit needs*
+
+*³ Conversion may fail, results in an optional value*
 
 ## Custom Types
 

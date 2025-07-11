@@ -35,13 +35,13 @@ You may assign a mutable reference to a variable that only requires a normal ref
 
 Instantiations of a struct always return a mutable reference to the instance.
 
-Also note that all of these declarations for variables are distinct:
-|Declaration|Reference in Variable|Modification of Instance|
+Also note that all of these declarations for variables are distinct and have different meanings:
+|Declaration of variable|Reassignment of new reference<br>`n = ...`|Modification of member of instance<br>`n.member = ...`|
 |-|-|-|
-|`val n: T`|Not Changeable|Not Allowed|
-|`mut n: T`|Changeable|Not Allowed|
-|`val n: mut T`|Not Changeable|Allowed|
-|`mut n: mut T`|Changeable|Allowed|
+|`val n: T`|✕ Forbidden|✕ Forbidden|
+|`mut n: T`|✓ Allowed|✕ Forbidden|
+|`val n: mut T`|✕ Forbidden|✓ Allowed|
+|`mut n: mut T`|✓ Allowed|✓ Allowed|
 
 ## Member Access
 
@@ -53,7 +53,7 @@ A member of a struct may be accessed by using [the `.`-operator](operators.md) o
 struct Cat(name: String, age: Int)
 
 fun main() {
-    val my_cat: mut Cat = Cat("Snowball", 3)
+    val my_cat: mut Cat = Cat("Snowball", 3) // try removing 'mut'!
     println(my_cat.age)
     my_cat.age = 4
     println(my_cat.age)

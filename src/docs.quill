@@ -13,6 +13,7 @@ pub val DOCUMENTS: List[Pair[String, String]] = List::of(
     Pair("Modules",             "modules.md"     ),
     Pair("Operators",           "operators.md"   ),
     Pair("Control Flow",        "control_flow.md"),
+    Pair("Literals",            "literals.md"    ),
     Pair("Structures",          "structures.md"  ),
     Pair("Enumerations",        "enumerations.md"),
     Pair("Anonymous Functions", "closures.md"    ),

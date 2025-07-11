@@ -12,6 +12,8 @@ In the following documents you will learn everything you need to read and write 
 
 ### All Documents
 
+The documents were written with the following reading order in mind (although they may also be read in any desired order):
+
 1. [Types](types.md)
 2. [Functions](functions.md)
 3. [Variables](variables.md)
@@ -19,8 +21,9 @@ In the following documents you will learn everything you need to read and write 
 5. [Modules](modules.md)
 6. [Operators](operators.md)
 7. [Control Flow](control_flow.md)
-8. [Structures](structures.md)
-9. [Enumerations](enumerations.md)
-10. [Anonymous Functions](closures.md)
-11. [Templates](templates.md)
-12. [External Functions](externals.md)
+8. [Literals](literals.d)
+9. [Structures](structures.md)
+10. [Enumerations](enumerations.md)
+11. [Anonymous Functions](closures.md)
+12. [Templates](templates.md)
+13. [External Functions](externals.md)
