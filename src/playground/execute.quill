@@ -125,7 +125,7 @@ pub fun compile(input: String) -> Result[String, String] {
     return Result::Ok(output)
 }
 
-pub val STD_FILES: List[String] = List::of(
+val LOADED_STD_FILES: List[Pair[String, String]] = load_std_files(
     ".quill/https___github_com_quill-project_std/src/bool.quill",
     ".quill/https___github_com_quill-project_std/src/containers.quill",
     ".quill/https___github_com_quill-project_std/src/float.quill",
@@ -155,18 +155,17 @@ pub val STD_FILES: List[String] = List::of(
     ".quill/https___github_com_quill-project_std-js/src/string.quill"
 )
 
-val LOADED_STD_FILES: mut List[Pair[String, String]] = List::empty()
-val LOAD_STD_FILES_REQ: Unit = load_std_files()
-
-fun load_std_files() {
+fun load_std_files(...files: List[String]) -> List[Pair[String, String]] {
     val window: mut Window = global("window")
         |> expect("in normal frontend context")
         |> Window::from_js()
-    for file: STD_FILES |> values() {
+    val out: mut List[Pair[String, String]] = List::empty()
+    for file: files |> values() {
+        val entry: mut Pair[String, String] = Pair(file, "")
         window |> fetch(file |> as_js(), RequestInit::default())
             |> then(Response::text)
-            |> map[String, Unit](|content| {
-                LOADED_STD_FILES |> push(Pair(file, content))
-            })
+            |> map[String, Unit](|content| { entry.second = content })
+        out |> push(entry)
     }
+    return out
 }
