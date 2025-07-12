@@ -63,9 +63,18 @@ fun make_link_button(id: Int, next: Bool) -> mut Element {
     button |> append_child(document |> create_element_str("br") |> as_mnode())
     button |> append_child(sub |> as_mnode())
     button |> add_event_listener("click", Option::Some(|_| {
-        render_document(id)
+        open_document(id)
     }), UNDEF)
     return button
+}
+
+pub fun open_document(id: Int) {
+    val new_url: String = WINDOW |> location() 
+        |> pathname()
+        |> concat("?")
+        |> concat(id |> as_string())
+    WINDOW |> history() |> push_state(UNDEF, "", Option::Some(new_url))
+    render_document(id)
 }
 
 pub fun render_document(id: Int) {
@@ -73,15 +82,6 @@ pub fun render_document(id: Int) {
     val page_element: mut Element = page_document 
         |> first_element_child() 
         |> expect("Document has no <html> tag!")
-    val new_url: String = WINDOW |> location() 
-        |> pathname()
-        |> concat("?")
-        |> concat(id |> as_string())
-    WINDOW |> history() |> replace_state(
-        JsObject::empty() |> as_js(),
-        "",
-        Option::Some(new_url)
-    )
     val out: mut Element = page_document
         |> get_element_by_id("doc")
         |> expect("Document has no element with ID 'doc'!")
